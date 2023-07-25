@@ -38,8 +38,8 @@ Python 3 should be installed on your system.
 sudo apt-get install python3-pip python3-venv git
 python3 -m venv venv
 source venv/bin/activate
-git clone https://github.com/c0dn/telegram_wakeonlan_bot.git
-cd telegram_wakeonlan_bot
+git clone https://github.com/MiguelJPen/telegram_wol_bot
+cd telegram_wol_bot
 pip install -r requirements.txt
 ```
 ### First run setup
@@ -55,7 +55,7 @@ export BOT_TOKEN=<your bot token>
 ```
 Run the bot.
 ```bash
-cd telegram_wakeonlan_bot
+cd telegram_wol_bot
 python3 main.py
 ```
 The bot will quit after printing a session string. Save this string, you will need it to setup the bot.
@@ -86,7 +86,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/home/pi/venv/bin/python3 /home/pi/telegram_wakeonlan_bot/main.py
+ExecStart=/home/pi/venv/bin/python3 /home/pi/telegram_wol_bot/main.py
 
 [Install]
 WantedBy=multi-user.target
