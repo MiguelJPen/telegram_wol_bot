@@ -33,11 +33,11 @@ async def main():
         else:
             # Setting bot commands
             await app.set_bot_commands([
-                BotCommand("start", "use this command to restart the bot if it's not responding"),
-                BotCommand("add_host", "Add new host to list"),
-                BotCommand("remove_host", "Remove host from list"),
-                BotCommand("list_hosts", "List all hosts"),
-                BotCommand("wake_host", "Wake host"),
+                BotCommand("start", "Usa este comando si el bot no responde"),
+                BotCommand("add_host", "Añade un nuevo ordenador a la lista"),
+                BotCommand("remove_host", "Elimina un ordenador de la lista"),
+                BotCommand("list_hosts", "Enumera los ordenadores en la lista"),
+                BotCommand("wake_host", "Enciende un ordenador"),
             ])
             print("Bot is running")
             await idle()
@@ -45,23 +45,23 @@ async def main():
 
 @app.on_message(filters.command("start") & whitelist_filter)
 async def welcome(_client: Client, message: Message):
-    await message.reply_text("Welcome!")
+    await message.reply_text("¡Bienvenido!")
 
 
 @app.on_message(filters.command("add_host") & whitelist_filter)
 async def add_host(_client: Client, message: Message):
-    m = "Please send the host details in the following format:\n" \
-        "Host name\n" \
-        "MAC address\n" \
-        "IP address\n" \
-        "Example:\n" \
+    m = "Por favor, envía los detalles del ordenador en el siguiente formato:\n" \
+        "Nombre (solo para ser identificado en la lista)\n" \
+        "Dirección MAC\n" \
+        "Dirección IP\n" \
+        "Ejemplo:\n" \
         "rogpc\n2C:54:91:88:C9:E3\n192.168.50.23"
     await message.reply_text(m)
 
 
 @app.on_message(filters.command("remove_host") & whitelist_filter)
 async def remove_host(client: Client, message: Message):
-    await client.send_message(message.chat.id, "Please select the hostname to remove",
+    await client.send_message(message.chat.id, "Por favor selecciona el ordenador a eliminar:",
                               reply_markup=build_host_list_markup("remove"))
 
 
@@ -74,18 +74,18 @@ async def list_hosts(client: Client, message: Message):
         m += f"MAC: {host['mac']}\n"
         m += f"IP: {host['ip']}\n"
         if check_if_up(host['ip']):
-            m += "Host is up\n"
+            m += "El ordenador está encendido!\n"
         else:
-            m += "Host is down\n"
+            m += "El ordenador está apagado\n"
         m += "\n"
     if m == "":
-        m += "No hosts saved"
+        m += "No hay ningún ordenador guardado"
     await message.reply_text(m)
 
 
 @app.on_message(filters.command("wake_host") & whitelist_filter)
 async def wake_host(client: Client, message: Message):
-    await client.send_message(message.chat.id, "Please select the host to wake",
+    await client.send_message(message.chat.id, "¿Qué ordenador quieres encender?",
                               reply_markup=build_host_list_markup("wake"))
 
 
@@ -95,7 +95,7 @@ async def remove_host_callback(_client: Client, callback_query: CallbackQuery):
     host_list = load_hosts("hosts.pkl")
     new_host_list = [h for h in host_list if h["name"] != hostname]
     save_hosts("hosts.pkl", new_host_list)
-    await callback_query.edit_message_text(f"Removed host {hostname} successfully!")
+    await callback_query.edit_message_text(f"¡Se ha eliminado {hostname} satisfactoriamente!")
 
 
 @app.on_callback_query(callback_data_filter(None, "wake") & whitelist_filter)
@@ -104,11 +104,11 @@ async def wake_host_callback(_client: Client, callback_query: CallbackQuery):
     host_list = load_hosts("hosts.pkl")
     host = [h for h in host_list if h["name"] == hostname][0]
     if check_if_up(host['ip']):
-        await callback_query.edit_message_text(f"Host {hostname} is already up!")
+        await callback_query.edit_message_text(f"¡El ordenador {hostname} ya está encendido!")
     else:
         mac_parsed = host["mac"].replace(":", ".")
         send_magic_packet(mac_parsed)
-        await callback_query.edit_message_text(f"Magic packet sent sucessfully to {hostname} ({host['mac']})!")
+        await callback_query.edit_message_text(f"¡Se ha enviado un paquete mágico a {hostname}!")
 
 
 @app.on_message(whitelist_filter)
@@ -118,9 +118,9 @@ async def handle_host_info(_client: Client, message: Message):
     if host_info:
         host_list.append(host_info)
         save_hosts("hosts.pkl", host_list)
-        await message.reply_text("Host added successfully!")
+        await message.reply_text("¡Se ha añadido el ordenador correctamente!")
     else:
-        await message.reply_text("Invalid host details!")
+        await message.reply_text("¡Los valores son incorrectos!")
 
 
 app.run(main())
